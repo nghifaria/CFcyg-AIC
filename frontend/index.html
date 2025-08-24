@@ -1,10 +1,9 @@
 <!doctype html>
 <html>
-
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>SmartWaste Challenge - Dashboard</title>
+    <title>SmartWaste Challenge</title>
     <style>
         * {
             box-sizing: border-box;
@@ -13,10 +12,10 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
             min-height: 100vh;
-            padding: 1rem;
+            padding: 2rem;
         }
 
         .container {
@@ -25,56 +24,102 @@
         }
 
         .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 1.5rem;
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            margin-bottom: 3rem;
         }
 
         .header h1 {
-            color: white;
-            font-size: 2rem;
+            font-size: 3rem;
+            color: #333;
             font-weight: 700;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            margin-bottom: 1rem;
         }
 
-        .user-info {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(10px);
+        .main-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
         }
 
-        .section {
+        .card {
             background: white;
-            margin: 1.5rem 0;
-            padding: 2rem;
             border-radius: 20px;
+            padding: 3rem;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
         }
 
-        .section h2 {
-            color: #2c3e50;
-            margin-bottom: 1.5rem;
-            font-size: 1.5rem;
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .card.waste-input {
+            background: linear-gradient(135deg, #4CAF50, #66BB6A);
+            color: white;
+        }
+
+        .card.leaderboard {
+            background: linear-gradient(135deg, #2196F3, #42A5F5);
+            color: white;
+        }
+
+        .card.daily-challenge {
+            background: linear-gradient(135deg, #FF9800, #FFB74D);
+            color: white;
+        }
+
+        .card-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .card h2 {
+            font-size: 2rem;
             font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .card p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        /* Detail sections - initially hidden */
+        .detail-section {
+            display: none;
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .detail-section.active {
+            display: block;
+        }
+
+        .detail-section h2 {
+            color: #333;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
         }
 
         .form-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
             margin-bottom: 1rem;
         }
 
@@ -82,444 +127,406 @@
             display: block;
             margin-bottom: 0.5rem;
             font-weight: 600;
-            color: #34495e;
+            color: #333;
         }
 
-        input[type=number],
-        input[type=text],
-        input[type=date] {
+        input, select {
             width: 100%;
             padding: 12px 16px;
-            border: 2px solid #e9ecef;
-            border-radius: 12px;
-            font-size: 14px;
-            transition: all 0.3s ease;
-            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
         }
 
-        input[type=number]:focus,
-        input[type=text]:focus,
-        input[type=date]:focus {
+        input:focus, select:focus {
             outline: none;
-            border-color: #667eea;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .button-group {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            margin-top: 1.5rem;
+            border-color: #2196F3;
         }
 
         button {
-            padding: 12px 24px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #2196F3, #42A5F5);
             color: white;
             border: none;
-            border-radius: 12px;
-            cursor: pointer;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 16px;
             font-weight: 600;
-            font-size: 14px;
+            cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
 
         button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        button.secondary {
-            background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
-            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
-        }
-
-        button.secondary:hover {
-            box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
-        }
-
-        button.danger {
-            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
-            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
-        }
-
-        button.danger:hover {
-            box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+            box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
         }
 
         button.success {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+            background: linear-gradient(135deg, #4CAF50, #66BB6A);
         }
 
-        button.success:hover {
-            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+        button.danger {
+            background: linear-gradient(135deg, #f44336, #ef5350);
+        }
+
+        .back-btn {
+            background: #666;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 1rem;
+            font-size: 14px;
+        }
+
+        .back-btn:hover {
+            background: #555;
         }
 
         table {
             width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
+            border-collapse: collapse;
             margin-top: 1rem;
-            border-radius: 12px;
+            background: white;
+            border-radius: 10px;
             overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
-        th,
-        td {
-            padding: 1rem;
+        th, td {
+            padding: 12px 16px;
             text-align: left;
-            border-bottom: 1px solid #e9ecef;
+            border-bottom: 1px solid #e0e0e0;
         }
 
         th {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            background: #f8f9fa;
             font-weight: 600;
-            color: #2c3e50;
-            text-transform: uppercase;
-            font-size: 12px;
-            letter-spacing: 1px;
+            color: #333;
         }
 
-        tbody tr {
-            transition: all 0.3s ease;
+        tr:hover {
+            background: #f8f9fa;
         }
 
-        tbody tr:hover {
-            background-color: #f8f9fa;
-            transform: scale(1.01);
+        .challenges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
         }
 
-        .status-pending {
-            color: #856404;
-            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .status-approved {
-            color: #155724;
-            background: linear-gradient(135deg, #d4edda 0%, #a8e6cf 100%);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .status-rejected {
-            color: #721c24;
-            background: linear-gradient(135deg, #f8d7da 0%, #ffb3ba 100%);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .pengurus-section {
-            background: linear-gradient(135deg, #e7f3ff 0%, #cce7ff 100%);
-            border: 2px solid #b3d9ff;
-        }
-
-        .ai-result {
-            margin-top: 1.5rem;
+        .challenge-card {
+            background: #f8f9fa;
             padding: 1.5rem;
-            background: linear-gradient(135deg, #f0f8ff 0%, #e6f3ff 100%);
-            border-radius: 15px;
-            border: 2px solid #b3d9ff;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            border-left: 4px solid #FF9800;
         }
 
-        .ai-result h4 {
-            color: #2c3e50;
-            margin-bottom: 1rem;
-            font-size: 1.1rem;
-        }
-
-        .ai-content p {
-            margin-bottom: 0.8rem;
-            color: #34495e;
-            line-height: 1.6;
-        }
-
-        .ai-content strong {
-            color: #2c3e50;
-        }
-
-        .challenge-item {
-            background: white;
-            padding: 1.5rem;
-            margin: 1rem 0;
-            border-radius: 15px;
-            border: 2px solid #e9ecef;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-        }
-
-        .challenge-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-            border-color: #667eea;
-        }
-
-        .challenge-item strong {
-            color: #2c3e50;
-            font-size: 1.1rem;
-            display: block;
+        .challenge-card h3 {
+            color: #333;
             margin-bottom: 0.5rem;
         }
 
-        .challenge-item p {
-            color: #7f8c8d;
+        .challenge-card p {
+            color: #666;
             margin-bottom: 1rem;
-            line-height: 1.6;
-        }
-
-        .result-message {
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
-            margin-top: 1rem;
-            font-weight: 600;
-        }
-
-        .result-success {
-            background: linear-gradient(135deg, #d4edda 0%, #a8e6cf 100%);
-            color: #155724;
-            border: 2px solid #28a745;
-        }
-
-        .result-error {
-            background: linear-gradient(135deg, #f8d7da 0%, #ffb3ba 100%);
-            color: #721c24;
-            border: 2px solid #dc3545;
         }
 
         @media (max-width: 768px) {
-            .container {
-                padding: 0.5rem;
-            }
-
-            .header {
-                flex-direction: column;
-                gap: 1rem;
-                text-align: center;
-            }
-
-            .form-grid {
+            .main-grid {
                 grid-template-columns: 1fr;
             }
-
-            .button-group {
-                justify-content: center;
+            
+            .header h1 {
+                font-size: 2rem;
             }
-
-            table {
-                font-size: 14px;
+            
+            .card {
+                padding: 2rem;
             }
-
-            th,
-            td {
-                padding: 0.5rem;
-            }
-        }
-
-        .icon {
-            width: 20px;
-            height: 20px;
-            margin-right: 8px;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
+        <!-- Header -->
         <div class="header">
-            <h1>🗂️ SmartWaste Dashboard</h1>
-            <div class="user-info">
-                <span>👋 Selamat datang di SmartWaste!</span>
+            <h1>SmartWaste Challenge</h1>
+        </div>
+
+        <!-- Main Dashboard Grid -->
+        <div id="main-dashboard" class="main-grid">
+            <div class="card waste-input" onclick="showWasteInput()">
+                <span class="card-icon">🌱</span>
+                <h2>Waste Input</h2>
+                <p>Laporkan sampah harian Anda dan dapatkan poin eco-friendly</p>
+            </div>
+
+            <div class="card leaderboard" onclick="showLeaderboard()">
+                <span class="card-icon">🏆</span>
+                <h2>Leaderboard</h2>
+                <p>Lihat ranking dan kompetisi dengan warga lainnya</p>
+            </div>
+
+            <div class="card daily-challenge" onclick="showDailyChallenge()">
+                <span class="card-icon">⚡</span>
+                <h2>Daily Challenge</h2>
+                <p>Selesaikan tantangan harian untuk bonus poin</p>
             </div>
         </div>
 
-        <div id="warga-section" class="section">
+        <!-- Waste Input Detail Section -->
+        <div id="waste-input-section" class="detail-section">
+            <button class="back-btn" onclick="showMainDashboard()">← Kembali ke Dashboard</button>
             <h2>📊 Lapor Sampah Harian</h2>
             <div class="form-grid">
-                <div>
+                <div class="form-group">
                     <label>Tanggal</label>
-                    <input id="date" type="date" />
+                    <input type="date" id="date" />
                 </div>
-                <div>
-                    <label>Deskripsi sampah (opsional)</label>
-                    <input id="description" type="text" placeholder="contoh: botol plastik, sisa makanan..." />
+                <div class="form-group">
+                    <label>Organik (kg)</label>
+                    <input type="number" id="organic" step="0.1" min="0" max="50" placeholder="0.0" />
                 </div>
-                <div>
-                    <label>Organic (kg)</label>
-                    <input id="organic" type="number" value="0" min="0" max="50" step="0.1" />
+                <div class="form-group">
+                    <label>Plastik (kg)</label>
+                    <input type="number" id="plastic" step="0.1" min="0" max="50" placeholder="0.0" />
                 </div>
-                <div>
-                    <label>Plastic (kg)</label>
-                    <input id="plastic" type="number" value="0" min="0" max="50" step="0.1" />
+                <div class="form-group">
+                    <label>Elektronik (kg)</label>
+                    <input type="number" id="electronic" step="0.1" min="0" max="50" placeholder="0.0" />
                 </div>
-                <div>
-                    <label>Electronic (kg)</label>
-                    <input id="electronic" type="number" value="0" min="0" max="50" step="0.1" />
-                </div>
-                <div>
-                    <label>Other (kg)</label>
-                    <input id="other" type="number" value="0" min="0" max="50" step="0.1" />
+                <div class="form-group">
+                    <label>Lainnya (kg)</label>
+                    <input type="number" id="other" step="0.1" min="0" max="50" placeholder="0.0" />
                 </div>
             </div>
-            <div class="button-group">
-                <button id="submit">📊 Kirim Laporan</button>
-                <button id="classify" class="secondary">🤖 Klasifikasi AI</button>
-            </div>
-            <div id="result"></div>
-            <div id="ai-result" class="ai-result" style="display:none;">
-                <h4>🤖 Hasil AI Classification:</h4>
-                <div id="ai-content"></div>
+            <button id="submit">✨ Submit Laporan</button>
+            <button onclick="classifyWaste()" class="success" style="margin-left: 1rem;">🤖 AI Classify</button>
+            
+            <div id="ai-classification" style="display: none; margin-top: 1.5rem; padding: 1rem; background: #f0f8ff; border-radius: 10px;">
+                <h3>🤖 AI Classification Result</h3>
+                <div id="ai-result"></div>
             </div>
         </div>
 
-        <div class="section">
-            <h2>🏆 Leaderboard RT</h2>
+        <!-- Leaderboard Detail Section -->
+        <div id="leaderboard-section" class="detail-section">
+            <button class="back-btn" onclick="showMainDashboard()">← Kembali ke Dashboard</button>
+            <h2>🏆 Leaderboard</h2>
             <table id="leaderboard">
                 <thead>
                     <tr>
-                        <th>RT</th>
-                        <th>Points</th>
-                        <th>Approved</th>
-                        <th>Pending</th>
+                        <th>Nama</th>
+                        <th>Total Points</th>
+                        <th>Laporan Approved</th>
+                        <th>Laporan Pending</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
             </table>
         </div>
 
-        <div class="section">
-            <h2>🎯 Challenge Hari Ini</h2>
-            <div id="challenges"></div>
+        <!-- Daily Challenge Detail Section -->
+        <div id="daily-challenge-section" class="detail-section">
+            <button class="back-btn" onclick="showMainDashboard()">← Kembali ke Dashboard</button>
+            <h2>⚡ Daily Challenges</h2>
+            <div id="challenges" class="challenges-grid"></div>
         </div>
 
-        <div id="pengurus-section" class="pengurus-section section" style="display:none;">
-            <h2>📋 Panel Pengurus</h2>
-            <h3>Laporan Pending Approval</h3>
-            <div id="pending-reports">
-                <button id="load-pending" class="secondary">🔄 Load Pending Reports</button>
-                <table id="pending-table" style="display:none;">
-                    <thead>
-                        <tr>
-                            <th>User</th>
-                            <th>Date</th>
-                            <th>Organic</th>
-                            <th>Plastic</th>
-                            <th>Electronic</th>
-                            <th>Other</th>
-                            <th>Points</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
+        <!-- Pengurus Panel -->
+        <div id="pengurus-section" class="detail-section">
+            <button class="back-btn" onclick="showMainDashboard()">← Kembali ke Dashboard</button>
+            <h2>👨‍💼 Panel Pengurus</h2>
+            <button id="load-pending" class="success">📋 Load Pending Reports</button>
+            <table id="pending-table" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Date</th>
+                        <th>Organic</th>
+                        <th>Plastic</th>
+                        <th>Electronic</th>
+                        <th>Other</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
         </div>
     </div>
+
     <script>
         const api = 'http://localhost:4000';
 
-        async function loadLeaderboard() {
-            const r = await fetch(api + '/leaderboard');
-            const data = await r.json();
-            const tbody = document.querySelector('#leaderboard tbody');
-            tbody.innerHTML = '';
-            data.forEach(row => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${row.name}</td><td>${row.total_points}</td><td>${row.approved_reports}</td><td>${row.pending_reports}</td>`;
-                tbody.appendChild(tr);
-            })
-        }
-
-        async function loadChallenges() {
-            const r = await fetch(api + '/challenges');
-            const data = await r.json();
-            const div = document.getElementById('challenges');
-            div.innerHTML = '';
-            data.forEach(ch => {
-                const el = document.createElement('div');
-                el.className = 'challenge-item';
-                el.innerHTML = `
-                    <strong>🎯 ${ch.title}</strong>
-                    <p>${ch.description}</p>
-                    <button data-id="${ch.id}" class="success">✨ Selesaikan ( +${ch.points} pts)</button>
-                `;
-                el.querySelector('button').addEventListener('click', async () => {
-                    const payload = { rt_id: 1, challenge_id: ch.id }; // Default RT ID
-                    const res = await fetch(api + '/challenges/complete', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                    const j = await res.json();
-                    if (j.awarded) {
-                        alert('🎉 Challenge selesai! Points awarded: ' + j.awarded);
-                        loadLeaderboard();
-                    } else {
-                        alert('❌ Error: ' + (j.error || 'unknown'));
-                    }
-                });
-                div.appendChild(el);
+        // Navigation functions
+        function showMainDashboard() {
+            document.getElementById('main-dashboard').style.display = 'grid';
+            document.querySelectorAll('.detail-section').forEach(section => {
+                section.classList.remove('active');
             });
         }
 
-        async function loadPendingReports() {
-            // Remove auth check - allow anyone to see pending reports
-            const res = await fetch(`${api}/pending-reports/1?pengurus_id=1`); // Default RT and pengurus ID
-            const reports = await res.json();
+        function showWasteInput() {
+            document.getElementById('main-dashboard').style.display = 'none';
+            document.getElementById('waste-input-section').classList.add('active');
+            
+            // Set today's date as default
+            const today = new Date().toISOString().slice(0, 10);
+            document.getElementById('date').value = today;
+        }
 
-            const table = document.getElementById('pending-table');
-            const tbody = table.querySelector('tbody');
-            tbody.innerHTML = '';
+        function showLeaderboard() {
+            document.getElementById('main-dashboard').style.display = 'none';
+            document.getElementById('leaderboard-section').classList.add('active');
+            loadLeaderboard();
+        }
 
-            if (reports.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8">Tidak ada laporan pending</td></tr>';
-            } else {
-                reports.forEach(report => {
+        function showDailyChallenge() {
+            document.getElementById('main-dashboard').style.display = 'none';
+            document.getElementById('daily-challenge-section').classList.add('active');
+            loadChallenges();
+        }
+
+        // Load data functions
+        async function loadLeaderboard() {
+            try {
+                const r = await fetch(api + '/leaderboard');
+                const data = await r.json();
+                const tbody = document.querySelector('#leaderboard tbody');
+                tbody.innerHTML = '';
+                data.forEach(row => {
                     const tr = document.createElement('tr');
-                    tr.innerHTML = `
+                    tr.innerHTML = `<td>${row.name}</td><td>${row.total_points}</td><td>${row.approved_reports}</td><td>${row.pending_reports}</td>`;
+                    tbody.appendChild(tr);
+                });
+            } catch (error) {
+                console.error('Error loading leaderboard:', error);
+            }
+        }
+
+        async function loadChallenges() {
+            try {
+                const r = await fetch(api + '/challenges');
+                const data = await r.json();
+                const div = document.getElementById('challenges');
+                div.innerHTML = '';
+                data.forEach(ch => {
+                    const el = document.createElement('div');
+                    el.className = 'challenge-card';
+                    el.innerHTML = `
+                        <h3>🎯 ${ch.title}</h3>
+                        <p>${ch.description}</p>
+                        <button data-id="${ch.id}" class="success">✨ Selesaikan ( +${ch.points} pts)</button>
+                    `;
+                    el.querySelector('button').addEventListener('click', async () => {
+                        const payload = { rt_id: 1, challenge_id: ch.id }; // Default RT ID
+                        const res = await fetch(api + '/challenges/complete', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                        const j = await res.json();
+                        if (j.awarded) {
+                            alert('🎉 Challenge selesai! Points awarded: ' + j.awarded);
+                            loadLeaderboard();
+                        } else {
+                            alert('❌ Error: ' + (j.error || 'unknown'));
+                        }
+                    });
+                    div.appendChild(el);
+                });
+            } catch (error) {
+                console.error('Error loading challenges:', error);
+            }
+        }
+
+        async function loadPendingReports() {
+            try {
+                // Remove auth check - allow anyone to see pending reports
+                const res = await fetch(`${api}/pending-reports/1?pengurus_id=1`); // Default RT and pengurus ID
+                const reports = await res.json();
+
+                const table = document.getElementById('pending-table');
+                const tbody = table.querySelector('tbody');
+                tbody.innerHTML = '';
+
+                if (reports.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">No pending reports</td></tr>';
+                } else {
+                    reports.forEach(report => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
               <td>${report.user_name}</td>
               <td>${report.date}</td>
               <td>${report.organic}</td>
               <td>${report.plastic}</td>
               <td>${report.electronic}</td>
               <td>${report.other}</td>
-              <td>${report.points}</td>
               <td>
                 <button onclick="approveReport(${report.id}, 'approve')" class="success">Approve</button>
                 <button onclick="approveReport(${report.id}, 'reject')" class="danger">Reject</button>
               </td>
             `;
-                    tbody.appendChild(tr);
-                });
-            }
+                        tbody.appendChild(tr);
+                    });
+                }
 
-            table.style.display = 'table';
+                table.style.display = 'table';
+            } catch (error) {
+                console.error('Error loading pending reports:', error);
+            }
         }
 
         async function approveReport(reportId, action) {
-            const res = await fetch(`${api}/approve-report`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ report_id: reportId, pengurus_id: 1, action }) // Default pengurus ID
-            });
+            try {
+                const res = await fetch(`${api}/approve-report`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ report_id: reportId, pengurus_id: 1, action }) // Default pengurus ID
+                });
 
-            const result = await res.json();
-            if (res.ok) {
-                alert(`Report ${result.status}`);
-                loadPendingReports();
-                loadLeaderboard();
-            } else {
-                alert('Error: ' + result.error);
+                const result = await res.json();
+                if (result.success) {
+                    alert(`Report ${action}d successfully!`);
+                    loadPendingReports();
+                    loadLeaderboard();
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            } catch (error) {
+                console.error('Error approving report:', error);
+                alert('Error approving report');
+            }
+        }
+
+        async function classifyWaste() {
+            const organic = Number(document.getElementById('organic').value) || 0;
+            const plastic = Number(document.getElementById('plastic').value) || 0;
+            const electronic = Number(document.getElementById('electronic').value) || 0;
+            const other = Number(document.getElementById('other').value) || 0;
+
+            if (organic + plastic + electronic + other === 0) {
+                alert('Masukkan data sampah terlebih dahulu');
+                return;
+            }
+
+            try {
+                const res = await fetch(api + '/classify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ organic, plastic, electronic, other })
+                });
+                const result = await res.json();
+
+                document.getElementById('ai-result').innerHTML = `
+                    <p><strong>Kategori Dominan:</strong> ${result.dominantCategory}</p>
+                    <p><strong>Eco Score:</strong> ${result.ecoScore}/100</p>
+                    <p><strong>Rekomendasi:</strong> ${result.recommendation}</p>
+                `;
+                document.getElementById('ai-classification').style.display = 'block';
+            } catch (error) {
+                console.error('Classification error:', error);
+                alert('Error during classification');
             }
         }
 
@@ -537,54 +544,44 @@
             try {
                 const res = await fetch(api + '/report', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
                 const j = await res.json();
-
-                if (res.ok) {
-                    document.getElementById('result').innerHTML = `<div class="result-message result-success">✅ Laporan terkirim! Points: ${j.points} (Status: ${j.status})</div>`;
-                    loadLeaderboard();
+                if (j.success) {
+                    alert('✅ Laporan berhasil dikirim!');
                     // Clear form
-                    document.getElementById('organic').value = 0;
-                    document.getElementById('plastic').value = 0;
-                    document.getElementById('electronic').value = 0;
-                    document.getElementById('other').value = 0;
-                    document.getElementById('description').value = '';
+                    document.getElementById('organic').value = '';
+                    document.getElementById('plastic').value = '';
+                    document.getElementById('electronic').value = '';
+                    document.getElementById('other').value = '';
+                    document.getElementById('ai-classification').style.display = 'none';
                 } else {
-                    document.getElementById('result').innerHTML = `<div class="result-message result-error">❌ Error: ${j.error}</div>`;
+                    alert('❌ Error: ' + j.error);
                 }
-            } catch (e) {
-                document.getElementById('result').innerHTML = `<div class="result-message result-error">❌ Network error</div>`;
+            } catch (error) {
+                console.error('Submit error:', error);
+                alert('❌ Error submitting report');
             }
-        });
-
-        document.getElementById('classify').addEventListener('click', async () => {
-            const payload = {
-                text: document.getElementById('description').value,
-                organic: Number(document.getElementById('organic').value),
-                plastic: Number(document.getElementById('plastic').value),
-                electronic: Number(document.getElementById('electronic').value),
-                other: Number(document.getElementById('other').value)
-            };
-            const res = await fetch(api + '/classify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-            const j = await res.json();
-            const aiDiv = document.getElementById('ai-result');
-            const content = document.getElementById('ai-content');
-            content.innerHTML = `
-          <p><strong>Kategori:</strong> ${j.category}</p>
-          <p><strong>Eco Score:</strong> ${j.eco_score}/100</p>
-          <p><strong>Rekomendasi:</strong> ${j.recommendation}</p>
-          <p><strong>Saran:</strong> ${j.suggestion}</p>
-        `;
-            aiDiv.style.display = 'block';
         });
 
         document.getElementById('load-pending').addEventListener('click', loadPendingReports);
 
-        // Initialize - load data directly without auth
-        loadLeaderboard();
-        loadChallenges();
-
-        // Show pengurus section by default
-        document.getElementById('pengurus-section').style.display = 'block';
+        // Initialize - show pengurus section by default on main dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add pengurus panel to main dashboard
+            const mainGrid = document.getElementById('main-dashboard');
+            const pengurusCard = document.createElement('div');
+            pengurusCard.className = 'card';
+            pengurusCard.style.background = 'linear-gradient(135deg, #9C27B0, #BA68C8)';
+            pengurusCard.style.color = 'white';
+            pengurusCard.onclick = () => {
+                document.getElementById('main-dashboard').style.display = 'none';
+                document.getElementById('pengurus-section').classList.add('active');
+            };
+            pengurusCard.innerHTML = `
+                <span class="card-icon">👨‍💼</span>
+                <h2>Panel Pengurus</h2>
+                <p>Kelola dan approve laporan dari warga</p>
+            `;
+            mainGrid.appendChild(pengurusCard);
+        });
     </script>
 </body>
-
 </html>
