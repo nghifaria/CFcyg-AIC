@@ -1,0 +1,6 @@
+@echo off
+echo Starting SmartWaste Frontend...
+cd frontend
+echo Installing serve if needed...
+npx serve -s . -l 3000
+pause

@@ -1,0 +1,10 @@
+{
+    "name": "smartwaste-frontend",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "start": "npx serve -s dist -l 3000",
+        "build": "echo 'No build step for simple static app'"
+    },
+    "dependencies": {}
+}
